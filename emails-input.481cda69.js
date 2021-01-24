@@ -117,7 +117,9 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"Nd5W":[function(require,module,exports) {
+})({"smVQ":[function(require,module,exports) {
+
+},{}],"Qc3q":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -125,33 +127,24 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.EmailsInput = void 0;
 
-function EmailsInput(rootNode) {
-  if (!rootNode) {
-    throw new Error('Missing root node');
+require("./emails-input.css");
+
+function getClipboardText(e) {
+  var _a;
+
+  var clipboardData = e.clipboardData || ((_a = e.originalEvent) === null || _a === void 0 ? void 0 : _a.clipboardData);
+
+  if (clipboardData) {
+    return clipboardData.getData('text/plain');
   }
 
-  rootNode.classList.add('emails-input');
-  rootNode.addEventListener('click', function (e) {
-    var target = e.target;
+  if (window.clipboardData) {
+    // IE11
+    return window.clipboardData.getData('Text');
+  }
+}
 
-    if (target.className === 'remove-button') {
-      var emailTag = target.parentNode;
-      var emailIndex = 0; // Array.prototype.findIndex isn't available in IE11
-
-      for (var i = 0; i < emails.length; i++) {
-        if (emails[i].value === target.dataset.value) {
-          emailIndex = i;
-          break;
-        }
-      }
-
-      emails.splice(emailIndex, 1);
-      rootNode.removeChild(emailTag);
-    } else {
-      input.focus();
-    }
-  });
-
+function buildInput(addEmail) {
   var flushInputValue = function flushInputValue() {
     if (input.value) {
       addEmail(input.value);
@@ -162,7 +155,7 @@ function EmailsInput(rootNode) {
 
   var input = document.createElement('input');
   input.setAttribute('placeholder', 'add more people...');
-  input.className = 'input';
+  input.className = 'emails-input--input';
   input.addEventListener('keypress', function (e) {
     if (e.key === 'Enter' || e.key === ',') {
       e.preventDefault();
@@ -171,62 +164,90 @@ function EmailsInput(rootNode) {
   });
   input.addEventListener('blur', flushInputValue);
   input.addEventListener('paste', function (e) {
-    var _a;
-
     e.preventDefault();
     flushInputValue();
-    var clipboardText = '';
-    var clipboardData = e.clipboardData || ((_a = e.originalEvent) === null || _a === void 0 ? void 0 : _a.clipboardData);
-
-    if (clipboardData) {
-      clipboardText = clipboardData.getData('text/plain');
-    }
-
-    if (window.clipboardData) {
-      // IE11
-      clipboardText = window.clipboardData.getData('Text');
-    }
+    var clipboardText = getClipboardText(e);
 
     if (clipboardText) {
       clipboardText.split(/[,\s]+/).forEach(addEmail);
     }
   });
-  rootNode.appendChild(input);
-  var style = document.createElement('style');
-  style.textContent = "\n        .emails-input {\n            border: 1px solid #c3c2cf;\n            border-radius: 4px;\n            overflow: auto;\n            background: #fff;\n            height: 88px;\n            padding: 4px 7px;\n            cursor: text;\n            font-size: 14px;\n            line-height: 24px;\n            color: #050038;\n        }\n        .email-tag {\n            margin: 4px 8px 0 0;\n            display: inline-block;\n        }\n\n        .valid {\n            background: rgba(102, 153, 255, 0.2);\n            border-radius: 100px;\n            padding: 0 10px;\n        }\n\n        .invalid {\n            border-bottom: 1px dashed #d92929;\n        }\n\n        .remove-button {\n            display: inline-block;\n            width: 8px;\n            height: 8px;\n            margin-left: 8px;\n            background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8 0.8L7.2 0L4 3.2L0.8 0L0 0.8L3.2 4L0 7.2L0.8 8L4 4.8L7.2 8L8 7.2L4.8 4L8 0.8Z' fill='currentColor'/%3E%3C/svg%3E\");\n            cursor: pointer;\n        }\n\n        .input {\n            border: 0;\n            outline: 0;\n            display: inline-block;\n            margin-top: 4px;\n        }\n    ";
-  rootNode.appendChild(style);
-  var emails = [];
+  return input;
+}
 
-  var addEmail = function addEmail(email) {
-    var isValid = /^[^\s,@]+@[^\s,@]+$/.test(email);
-    emails.push({
-      value: email,
-      isValid: isValid
-    });
+function EmailsInput(rootNode) {
+  if (!rootNode) {
+    throw new Error('Missing root node');
+  }
+
+  if (rootNode.classList.contains('emails-input')) {
+    throw new Error("EmailsInput is already initialized on " + rootNode);
+  }
+
+  var validEmailCount = 0;
+  var emails = {};
+  rootNode.classList.add('emails-input');
+  rootNode.addEventListener('click', function (e) {
+    var target = e.target;
+
+    if (target.className === 'emails-input--remove-button') {
+      var emailTag = target.parentNode;
+      var email = emails[target.dataset.value];
+      email.num--;
+
+      if (email.num === 0) {
+        validEmailCount--;
+      }
+
+      rootNode.removeChild(emailTag);
+    } else {
+      input.focus();
+    }
+  });
+
+  var addEmail = function addEmail(value) {
+    value = value.trim();
+
+    if (!value) {
+      return;
+    }
+
+    if (!(value in emails)) {
+      emails[value] = {
+        num: 0,
+        isValid: /^[^\s,@]+@[^\s,@]+$/.test(value)
+      };
+    }
+
+    var email = emails[value];
+    email.num++;
+
+    if (email.isValid && email.num === 1) {
+      validEmailCount++;
+    }
+
     var emailTag = document.createElement('span');
-    emailTag.textContent = email;
-    emailTag.classList.add('email-tag');
-    emailTag.classList.add(isValid ? 'valid' : 'invalid');
+    emailTag.textContent = value;
+    emailTag.classList.add('emails-input--tag');
+    emailTag.classList.add(email.isValid ? 'emails-input--tag-valid' : 'emails-input--tag-invalid');
     var removeBtn = document.createElement('span');
-    removeBtn.className = 'remove-button';
-    removeBtn.dataset.value = email;
+    removeBtn.className = 'emails-input--remove-button';
+    removeBtn.dataset.value = value;
     emailTag.appendChild(removeBtn);
     rootNode.insertBefore(emailTag, input);
   };
 
+  var input = buildInput(addEmail);
+  rootNode.appendChild(input);
   return {
     addEmail: addEmail,
     getEmailCount: function getEmailCount() {
-      return new Set(emails.filter(function (email) {
-        return email.isValid;
-      }).map(function (email) {
-        return email.value;
-      })).size;
+      return validEmailCount;
     }
   };
 }
 
 exports.EmailsInput = EmailsInput;
 window.EmailsInput = EmailsInput;
-},{}]},{},["Nd5W"], null)
-//# sourceMappingURL=/emails-input.a0dcc0e1.js.map
+},{"./emails-input.css":"smVQ"}]},{},["Qc3q"], null)
+//# sourceMappingURL=/emails-input.481cda69.js.map
