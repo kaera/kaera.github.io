@@ -60,7 +60,7 @@ function EmailsInput(rootNode) {
         var isValid = /^[^\s,@]+@[^\s,@]+$/.test(email);
         emails.push({
             value: email,
-            isValid: isValid,
+            isValid: isValid
         });
         var emailTag = document.createElement('span');
         emailTag.textContent = email;
@@ -77,7 +77,7 @@ function EmailsInput(rootNode) {
             return new Set(emails
                 .filter(function (email) { return email.isValid; })
                 .map(function (email) { return email.value; })).size;
-        },
+        }
     };
 }
 exports.EmailsInput = EmailsInput;
