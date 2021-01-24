@@ -1,6 +1,6 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.EmailsInput = void 0;
+// Object.defineProperty(exports, "__esModule", { value: true });
+// exports.EmailsInput = void 0;
 function EmailsInput(rootNode) {
     if (!rootNode) {
         throw new Error('Missing root node');
@@ -80,4 +80,4 @@ function EmailsInput(rootNode) {
         }
     };
 }
-exports.EmailsInput = EmailsInput;
+// exports.EmailsInput = EmailsInput;
