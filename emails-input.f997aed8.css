@@ -39,7 +39,12 @@
     outline: 0;
     display: inline-block;
     margin-top: 4px;
+    font-size: 14px;
+}
+
+.emails-input--input::-ms-clear {
+    display: none;
 }
 
 
-/*# sourceMappingURL=/emails-input.99f35dcc.css.map */
+/*# sourceMappingURL=/emails-input.f997aed8.css.map */
