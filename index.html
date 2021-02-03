@@ -1,73 +1,16 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <style>
-            @import url('https://fonts.googleapis.com/css2?family=Open+Sans');
+<meta charset="utf-8" />
+<title>v-game demo</title>
+<script src="https://unpkg.com/vue"></script>
+<script src="./v-game.js"></script>
 
-            body {
-                font-family: 'Open Sans', Helvetica, Arial, sans-serif;
-                font-weight: 400;
-            }
+<style>
+  body {
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #2c3e50;
+    margin-top: 60px;
+  }
+</style>
 
-            .form {
-                width: 540px;
-                margin: 100px auto;
-
-                background: #fff;
-                border-radius: 8px;
-                box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
-            }
-
-            .form-body {
-                padding: 32px 50px 24px;
-                background: #f8f8f7;
-            }
-
-            .form-title {
-                margin-bottom: 24px;
-                font-size: 20px;
-                line-height: 27px;
-            }
-
-            .form-footer {
-                display: flex;
-                padding: 24px 50px 32px;
-            }
-
-            .form-button {
-                margin-right: 16px;
-                padding: 8px 16px;
-                background: #4262ff;
-                border: 0;
-                border-radius: 6px;
-                outline: 0; /* edge */
-
-                color: #fff;
-                font-size: 14px;
-                line-height: 24px;
-                text-align: center;
-                cursor: pointer;
-            }
-        </style>
-    </head>
-    <body>
-        <form class="form">
-            <div class="form-body">
-                <div class="form-title">
-                    Share <strong>Board name</strong> with others
-                </div>
-                <div id="emails-input"></div>
-            </div>
-            <div class="form-footer">
-                <button class="form-button" type="button" id="add-email">
-                    Add email
-                </button>
-                <button class="form-button" type="button" id="show-email-count">
-                    Get email count
-                </button>
-            </div>
-        </form>
-        <script src="emails-input.js"></script>
-        <script src="index.js"></script>
-    </body>
-</html>
+<v-game></v-game>
